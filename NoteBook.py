@@ -354,7 +354,8 @@ print(isPalindrome('ABCDXYZZYXDCBA',0,len('ABCDXYZZYXDCBA') -1))
 class QueensProblem:
     def __init__(self,numOfQueens):
         self.numOfQueens = numOfQueens
-        self.chessTable = [[0]*numOfQueens]*numOfQueens
+        self.chessTable = [ [ 0 for i in range(numOfQueens) ] for j in range(numOfQueens) ]
+        self.solutionCount = 0
 
     def solve(self) :
         if(self.setQueens(0)):
@@ -378,37 +379,75 @@ class QueensProblem:
             if(self.isPlaceValid(rowIndex,colIndex)):
                 self.chessTable[rowIndex][colIndex] = 1
                 if(self.setQueens(colIndex + 1)):
-                    return True
+                    if(colIndex == self.numOfQueens - 1):
+                        self.printQueens()
+                        self.solutionCount = self.solutionCount + 1
+                        print(self.solutionCount )
+                    else:
+                        return True
                 # BackTracking
                 self.chessTable[rowIndex][colIndex] = 0 
         return False
 
     def isPlaceValid(self,rowIndex,colIndex):
-        for i in range(colIndex):
+        #LEFT TO RIGHT
+        for i in range(numOfQueens):
+            if(i == colIndex):
+                continue
             if(self.chessTable[rowIndex][i] == 1):
-                print('Lost at 1 value, invalid because of ', self.chessTable[rowIndex], ' ROW ',rowIndex, i)
                 return False
+        #Top To Bottom
+        for i in range(numOfQueens):
+            if(i == rowIndex):
+                continue
+            if(self.chessTable[i][colIndex] == 1):
+                return False
+        #topLeft to BottomRight diagonal
+        i = rowIndex - 1
+        j = colIndex - 1
+        while(i>=0 and j>= 0):
+            if(self.chessTable[i][j] == 1):
+                return False
+            i = i -1
+            j= j -1
+        i = rowIndex + 1
+        j = colIndex + 1
+        while(i<self.numOfQueens and j<self.numOfQueens):
+            if(self.chessTable[i][j] == 1):
+                return False
+            i = i +1
+            j= j +1
         
-        a = rowIndex
-        b = colIndex
-        while (a>=0 and b>=0):
-            if(self.chessTable[a][b] == 1):
-                print('Lost at 2', a, b)
+        #bottom legt to top right diagonal
+        i = rowIndex - 1
+        j = colIndex + 1
+        while (i >= 0 and j < self.numOfQueens):
+            if(self.chessTable[i][j] == 1):
                 return False
-            a = a - 1
-            b = b - 1
+            i = i -1
+            j = j + 1
+        i = rowIndex + 1
+        j = colIndex - 1 
+        while (i < self.numOfQueens and j>= 0 ):
+            if(self.chessTable[i][j] == 1):
+                return False
+            i = i + 1 
+            j = j -1
 
-        a = rowIndex
-        b = colIndex
-        while(a< len(self.chessTable) and b>=0):
-            if(self.chessTable[a][b] == 1):
-                print('Lost at 3', a, b)
-                return False
-            a = a + 1
-            b = b - 1
-            
-        print('Pass at ', rowIndex,colIndex)
         return True
-            
-queensProb = QueensProblem(8)
+
+numOfQueens= 8  # 92 Solutions     
+queensProb = QueensProblem(numOfQueens)
+# queensProb.chessTable[7][6] = 1
+# queensProb.chessTable[1][0] = 1
+# queensProb.chessTable[2][5] = 1
+# print('Validity Check')
+# for i in range(numOfQueens):
+#     for j in range(numOfQueens):
+#         if(queensProb.isPlaceValid(i,j)):
+#             print(' * ',end='')
+#         else:
+#             print(' - ',end='')
+#     print()
+
 queensProb.solve()
